@@ -1,0 +1,46 @@
+{% extends "dl_menu.html" %}
+{% block content %}
+<h1 class="text-center">Categories</h1>
+<div class="container">
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'dl:category_create' %}">
+        <input class ="form-control form-horizontal btn btn-primary" type="submit" value="Add Category">
+    </form>
+    {% endif %}
+
+{% if category_list %}
+<ul class="list-group">
+  {% for category in category_list %}
+
+        <a class="list-group-item" href="{% url 'dl:category_detail'  category.id %}">
+                {% if category.owner == user %}
+        <span class="pull-right">
+                <form action="{% url 'dl:category_delete' category.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </form>
+            </span>
+            <span class="pull-right">
+                <form action="{% url 'dl:category_update' category.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                </form>
+            </span>
+        {% endif %}
+        <h4 class="list-group-heading"> {{ category.title }}</h4>
+
+    </a>
+
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no categories in the database.</p>
+{% endif %}
+</p>
+
+</div>
+
+{% endblock %}

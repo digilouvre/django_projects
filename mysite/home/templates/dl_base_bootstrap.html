@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Edit dj4e-samples/settings.py and add APP_NAME = 'DJ4E Samples' or similar -->
+<title>Digi Louvre</title>
+<meta charset="utf-8">
+<!-- Replace this value (42-42) with the one provided by the autograder -->
+<!--<meta name="dj4e" content="1759e864edd6cb2200926b3a2f729dac">-->
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!--<link rel="stylesheet"-->
+<!--    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"-->
+<!--    crossorigin="anonymous">-->
+
+<!--{% load static %}-->
+
+
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/darkly/bootstrap.css"
+    crossorigin="anonymous">
+
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/darkly/bootstrap.css"
+    crossorigin="anonymous">
+
+
+<!--<link rel="stylesheet"-->
+<!--    href="{% static 'bootstrap.min.css' %}">-->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    crossorigin="anonymous"></script>
+
+<!--<link rel="stylesheet"-->
+<!--    href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"-->
+<!--    crossorigin="anonymous">-->
+
+<!--<link rel="stylesheet"-->
+<!--    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"-->
+<!--    crossorigin="anonymous">-->
+
+<!--<link rel="stylesheet"-->
+<!--    href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css"-->
+<!--     crossorigin="anonymous">-->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+    crossorigin="anonymous"></script>
+
+<!--<script-->
+<!--  src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"-->
+<!--  crossorigin="anonymous"></script>-->
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/v4-shims.css">
+
+<style>
+body {
+  padding-top: 60px;
+}
+
+@media (max-width: 991px) {
+    .navbar-nav {
+      margin: 7.5px -15px;
+   }
+    .ul-links {
+      display: block;
+    }
+    .navbar-nav>li>a {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      line-height: 20px;
+    }
+    .navbar-header {
+        float: none;
+    }
+    .navbar-left,.navbar-right {
+        float: none !important;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+
+    .navbar-collapse.collapse {
+        display: none!important;
+        max-height: none;
+    }
+    .navbar-nav {
+        float: none!important;
+    }
+    .navbar-nav>li {
+        float: none;
+    }
+    .collapse.in{
+        display:block !important;
+    }
+   .navbar-nav .open .dropdown-menu {
+       position: static;
+       float: none;
+       width: auto;
+       margin-top: 0;
+       background-color: transparent;
+       border: 0;
+       -webkit-box-shadow: none;
+       box-shadow: none;
+    }
+  }
+
+</style>
+
+{% block head %} {% endblock %}
+
+</head>
+<body>
+
+{% block navbar %} {% endblock %}
+{% block carousel %}
+{% endblock %}
+<div class="container">
+{% block welcome %} {% endblock %}
+{% block messages %}
+    {% if messages %}
+    {% for msg in messages %}
+        <div class="container">
+        <div class="alert alert-{{msg.level_tag}}" role="alert">
+        {{msg.message}}
+        </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+{% endblock %}
+</div>
+
+
+
+{% block footer %} {% endblock %}
+</body>
+</html>

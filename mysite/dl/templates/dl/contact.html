@@ -1,0 +1,29 @@
+{% extends "dl_menu.html" %}
+
+{% block content %}
+<h1>Digi Louvre Contact Form</h1>
+
+
+<form class="form" action="{% url 'dl:send_contact' %}" method="POST">{% csrf_token %}
+  <div class="form-group">
+  <label>Name:</label>
+  <input class="form-control" name="name" id="name">
+  </div>
+  <div class="form-group">
+  <label>Email:</label>
+  <input class="form-control" type="email" name="email" id="email">
+  </div>
+  <div class="form-group">
+  <label>Subject:</label>
+  <input class="form-control" name="subject" id="subject">
+  </div>
+  <div class="form-group">
+  <label>Message:</label>
+  <textarea class="form-control" name="message" id="message" rows="4"></textarea>
+ </div>
+ <div class="form-group">
+  <button class="btn btn-primary btn-block" type="submit">Send</button>
+  </div>
+</form>
+
+{% endblock %}

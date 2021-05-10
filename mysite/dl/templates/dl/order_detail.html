@@ -1,0 +1,63 @@
+{% extends "dl_menu.html" %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="container">
+
+<h2 class="text-center"> Order #: {{ order.id }} </h2>
+<ul class="list-group">
+    <h4 class="list-group-heading">Order Address:</h4>
+    <li class="list-group-item"> <strong>Username:</strong> {{ order.checkout_address.user }}</li>
+    <li class="list-group-item"> <strong>Email:</strong> {{ order.checkout_address.user.email }}</li>
+    <li class="list-group-item"> <strong>Billing Name:</strong> {{ order.checkout_address.billing_name }}</li>
+    <li class="list-group-item"> <strong>Phone:</strong> {{ order.checkout_address.phone }}</li>
+    <li class="list-group-item"> <strong>Billing Street Address:</strong> {{order.checkout_address.street_address}}</li>
+    <li class="list-group-item"> <strong>Billing Apartment Address:</strong> {{order.checkout_address.apartment_address}}</li>
+    <li class="list-group-item"> <strong>Billing City:</strong> {{order.checkout_address.city}}</li>
+    <li class="list-group-item"> <strong>Billing Province/State:</strong> {{order.checkout_address.province_or_state}}</li>
+    <li class="list-group-item"> <strong>Billing Country:</strong> {{order.checkout_address.country}}</li>
+    <li class="list-group-item"> <strong>Billing Postal/Zip Code:</strong> {{order.checkout_address.zip}}</li>
+    {% if order.checkout_address.address_is_same == False %}
+    <li class="list-group-item"> <strong>Shipping Name:</strong> {{ order.checkout_address.shipping_name }}</li>
+    <li class="list-group-item"> <strong>Shipping Street Address:</strong>{{order.checkout_address.shipping_street_address}}</li>
+    <li class="list-group-item"> <strong>Shipping Apartment Address:</strong> {{order.checkout_address.shipping_apartment_address}}</li>
+    <li class="list-group-item"> <strong>Shipping City:</strong> {{order.checkout_address.shipping_city}}</li>
+    <li class="list-group-item"> <strong>Shipping Province/State:</strong> {{order.checkout_address.shipping_province_or_state}}</li>
+    <li class="list-group-item"> <strong>Shipping Country:</strong> {{order.checkout_address.shipping_country}}</li>
+    <li class="list-group-item"> <strong>Shipping Postal/Zip Code:</strong> {{order.checkout_address.shipping_zip}}</li>
+    {% else %}
+    <li class="list-group-item"><strong>(Shipping address is same as billing address.</strong>)</li>
+    {% endif %}
+</ul>
+
+<ul class="list-group">
+    <h4 class="list-group-heading">Order Payment:</h4>
+    <li class="list-group-item"> <strong>Payment Type: </strong> {% if order.payment.payment_type == 'S' %}Stripe{% elif order.payment.payment_type == 'P' %}Paypal{% endif %}</li>
+    <li class="list-group-item"> <strong>{% if order.payment.payment_type == 'S' %}Stripe{% elif order.payment.payment_type == 'P' %}Paypal{% endif %} Id:</strong> {{ order.payment.payment_id }}</li>
+    <li class="list-group-item"> <strong>Timestamp:</strong> {{ order.payment.timestamp }}</li>
+    <li class="list-group-item"> <strong>Pre-tax subtotal:</strong> ${{ order.subtotal|floatformat:2 }}</li>
+    <li class="list-group-item"> <strong>Shipping amount:</strong> ${{ order.shipping_amount|floatformat:2 }}</li>
+    <li class="list-group-item"> <strong>Tax rate:</strong> {{ order.get_tax_rate }}%</li>
+    <li class="list-group-item"> <strong>Tax amount:</strong> ${{ order.tax_amount|floatformat:2 }}</li>
+    <li class="list-group-item"> <strong>Total amount:</strong> ${{ order.payment.amount|floatformat:2 }}</li>
+
+
+
+
+
+</ul>
+
+<ul class="list-group">
+    <h4 class="list-group-heading">Order Items:</h4>
+    {% for item in item_list %}
+    <li class="list-group-item"> {{ item }} - ${{ item.item.price|floatformat:2 }} each</li>
+    {% endfor %}
+</ul>
+
+
+<p>
+<a href="{% url 'dl:all_orders' %}" class="btn btn-default btn-block" role="button">Back to Orders</a>
+</p>
+</div>
+{% endblock %}

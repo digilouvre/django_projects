@@ -1,0 +1,46 @@
+{% extends "dl_menu.html" %}
+{% block content %}
+<h1 class="text-center">All Products</h1>
+<div class="container">
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'dl:product_create' %}">
+        <input class ="form-control form-horizontal btn btn-primary" type="submit" value="Add Product">
+    </form>
+    {% endif %}
+
+{% if product_list %}
+<ul class="list-group">
+  {% for product in product_list %}
+
+        <a class="list-group-item" href="{% url 'dl:product'  product.id %}">
+                {% if product.owner == user %}
+        <span class="pull-right">
+                <form action="{% url 'dl:product_delete' product.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </form>
+            </span>
+            <span class="pull-right">
+                <form action="{% url 'dl:product_update' product.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                </form>
+            </span>
+        {% endif %}
+        <h4 class="list-group-heading"> {{ product.item_name }} - ${{ product.price|floatformat:2 }}</h4>
+
+    </a>
+
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no products in the database.</p>
+{% endif %}
+</p>
+
+</div>
+
+{% endblock %}

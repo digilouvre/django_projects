@@ -1,0 +1,162 @@
+{% extends "dl_menu.html" %}
+{% block head %}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+
+{% endblock %}
+{% block content %}
+<h1 class="text-center">Orders</h1>
+<div class="container">
+
+{% load crispy_forms_tags %}
+
+<div class="container">
+<form method="GET">
+    {{ order_filter.form|crispy }}
+    <button type="submit" class="btn btn-block btn-primary">Search Orders</button>
+  </form>
+
+{% if order_list and order_filter.qs %}
+
+
+  <!--<div class="container">-->
+  <table class="table table-hover table-bordered">
+    <thead>
+      <tr>
+        <th>Order #</th>
+        <th>User</th>
+        <th>Date Ordered</th>
+        <th>Payment Type</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+
+        {% for order in order_filter.qs %}
+        {% if order.ordered %}
+      <tr>
+
+        <td><a href="{% url 'dl:order_detail'  order.id %}">{{ order.id }}</a></td>
+        <td>{{ order.user }}</td>
+        <td>{{ order.ordered_date }}</td>
+        <td>{% if order.payment.payment_type == 'S' %}Stripe{% elif order.payment.payment_type == 'P' %}Paypal{% endif %}</td>
+        <td>${{ order.payment.amount|floatformat:2 }}</td>
+      </tr>
+      {% endif %}
+
+      {% endfor %}
+      <tr>
+          <td><strong>Order count: </strong></td>
+          <td>{{ order_count }}</td>
+          <td></td>
+          <td><strong>Total sales amount: </strong></td>
+          <td>${{ total|floatformat:2 }}</td>
+
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+{% elif order_list is None %}
+  <p>There are no orders in the database.</p>
+  </div>
+{% else %}
+    <p></p>
+    <p><strong>There are no orders matching your search criteria</strong></p>
+    <p></p>
+{% endif %}
+</p>
+
+<h4 class="text-center"><strong>Taxes enabled:</strong> {{ taxes_enabled }}</h4>
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/ca.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+
+
+<script>
+    // change label for payment__payment_type field
+
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
+
+    var labels = document.getElementsByTagName('label');
+    var label = null;
+    var selectID = 'id_payment__payment_type';
+
+    for (var i = 0; i < labels.length; i++)
+    if (labels[i].htmlFor == selectID) {
+        label = labels[i];
+        break;
+    }
+        label.innerHTML = "Payment Type"
+    document.getElementById("id_ordered_date_0").placeholder = "Date from";
+    document.getElementById("id_ordered_date_0").type = "text";
+    document.getElementById("id_ordered_date_1").placeholder = "Date to";
+    document.getElementById("id_ordered_date_1").type = "text";
+    var picker = new Pikaday({
+    field: document.getElementById('id_ordered_date_0'),
+    format: 'D/M/YYYY',
+    toString(date, format) {
+        // you should do formatting based on the passed format,
+        // but we will just return 'D/M/YYYY' for simplicity
+        date2 = addDays(date, 1);
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${year}-${month}-${day}`;
+    },
+    parse(dateString, format) {
+        // dateString is the result of `toString` method
+        const parts = dateString.split('/');
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    }
+
+});
+
+var picker2 = new Pikaday({
+    field: document.getElementById('id_ordered_date_1'),
+    format: 'D/M/YYYY',
+    toString(date, format) {
+        // you should do formatting based on the passed format,
+        // but we will just return 'D/M/YYYY' for simplicity
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${year}-${month}-${day}`;
+    },
+    parse(dateString, format) {
+        // dateString is the result of `toString` method
+        const parts = dateString.split('/');
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    }
+
+});
+
+    const beforeSelect = document.getElementById("id_ordered_date_0")
+    const afterSelect = document.getElementById("id_ordered_date_1")
+
+    // *** want to set 2nd field 'afterSelect' to 1 day later of 'beforeSelect' field value
+
+    beforeSelect.addEventListener("change", function() {
+
+        // afterSelect.value = beforeSelect.value;
+
+
+    });
+
+</script>
+
+{% endblock %}

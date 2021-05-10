@@ -1,0 +1,46 @@
+{% extends "dl_menu.html" %}
+{% block content %}
+<h1 class="text-center">Galleries</h1>
+<div class="container">
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'dl:gallery_create' %}">
+        <input class ="form-control form-horizontal btn btn-primary" type="submit" value="Add Gallery">
+    </form>
+    {% endif %}
+
+{% if gallery_list %}
+<ul class="list-group">
+  {% for gallery in gallery_list %}
+
+        <a class="list-group-item" href="{% url 'dl:gallery_detail'  gallery.id %}">
+                    {% if gallery.owner == user %}
+        <span class="pull-right">
+                <form action="{% url 'dl:gallery_delete' gallery.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </form>
+            </span>
+            <span class="pull-right">
+                <form action="{% url 'dl:gallery_update' gallery.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                </form>
+            </span>
+        {% endif %}
+        <h4 class="list-group-heading"> {{ gallery.title }}</h4>
+
+    </a>
+
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no galleries in the database.</p>
+{% endif %}
+</p>
+
+</div>
+
+{% endblock %}

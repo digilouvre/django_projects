@@ -1,0 +1,52 @@
+{% extends "dl_menu.html" %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="container">
+<span style="float: right;">
+{% if gallery.owner == user %}
+<a href="{% url 'dl:gallery_update' gallery.id %}"><i class="fa fa-pencil"></i></a>
+<a href="{% url 'dl:gallery_delete' gallery.id %}"><i class="fa fa-trash"></i></a>
+{% endif %}
+</span>
+
+<h2 class="text-center"> {{ gallery.title }} </h2>
+<!--<p class="text-center"><strong >Description: </strong>{{ gallery.description }}</p>-->
+
+
+{% if category_list %}
+<ul class="list-group">
+  {% for category in category_list %}
+
+        <a class="list-group-item" href="{% url 'dl:category_detail'  category.id %}">
+                {% if category.owner == user %}
+        <span class="pull-right">
+                <form action="{% url 'dl:category_delete' category.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </form>
+            </span>
+            <span class="pull-right">
+                <form action="{% url 'dl:category_update' category.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                </form>
+            </span>
+        {% endif %}
+        <h4 class="list-group-heading"> {{ category.title }}</h4>
+
+    </a>
+
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no categories in the database.</p>
+{% endif %}
+<p>
+<a href="{% url 'dl:all_galleries' %}" class="btn btn-default btn-block" role="button">All Galleries</a>
+</p>
+</div>
+{% endblock %}

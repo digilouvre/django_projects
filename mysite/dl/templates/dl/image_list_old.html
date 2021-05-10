@@ -1,0 +1,51 @@
+{% extends "dl_menu.html" %}
+{% load humanize %}
+{% block content %}
+<h1  class="text-center">Images</h1>
+<div class="container">
+    {% if user.is_authenticated %}
+    <form action="{% url 'dl:image_create' %}">
+        <input class ="form-control form-horizontal btn btn-primary" type="submit" value="Add Image">
+    </form>
+    {% endif %}
+{% if image_list %}
+<ul class="list-group">
+  {% for image in image_list %}
+
+        <a class="list-group-item" href="{% url 'dl:image_detail'  image.id %}">
+
+            {% if image.content_type %}
+        <img  class="img-thumbnail img-responsive center-block" style="max-width:33%" src="{% url 'dl:stream_image' image.id %}">
+        {% endif %}
+
+        <h4 class="list-group-item-heading text-center">{{image.title}} -- {{image.category.title}}</h4>
+        <p class="list-group-item-heading text-center">Posted {{ image.updated_at|naturaltime }}</p>
+        <!--{% if image.owner == user %}-->
+        <!--<span class="text-center">-->
+        <!--        <form action="{% url 'dl:image_delete' image.id %}">-->
+        <!--            <button type="submit" class="btn btn-link">-->
+        <!--                <span class="glyphicon glyphicon-trash"></span>-->
+        <!--            </button>-->
+        <!--        </form>-->
+        <!--        <form action="{% url 'dl:image_update' image.id %}">-->
+        <!--            <button type="submit" class="btn btn-link">-->
+        <!--                <span class="glyphicon glyphicon-pencil"></span>-->
+        <!--            </button>-->
+        <!--        </form>-->
+        <!--    </span>-->
+
+        <!--{% endif %}-->
+        </a>
+
+
+
+
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no images in the database.</p>
+{% endif %}
+</p>
+</div>
+
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "dl_menu.html" %}
+
+{% load static %}
+
+{% block head %}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+<style type="text/css">
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .slider {
+        width: 50%;
+        margin: 100px auto;
+    }
+
+    .slick-slide {
+      margin: 0px 20px;
+    }
+
+    .slick-slide img {
+      width: 100%;
+    }
+
+    .slick-prev:before,
+    .slick-next:before {
+      color: black;
+    }
+
+
+    .slick-slide {
+      transition: all ease-in-out .3s;
+      opacity: .2;
+    }
+
+    .slick-active {
+      opacity: .5;
+    }
+
+    .slick-current {
+      opacity: 1;
+    }
+    .slick-dots li button:before {
+    color: gray;
+  }
+  .slick-dots li.slick-active button:before {
+    color:white !important;
+}
+/*.slick-slide {*/
+/*    width: 60vw;*/
+/*    // for absorbing width from @Ken Wheeler answer*/
+/*    box-sizing: border-box;*/
+/*}*/
+  </style>
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+{% endblock %}
+
+
+{% block content %}
+
+
+<h1 class="text-center">Carousel Test</h1>
+
+<section class="vertical-center-1 slider">
+    <div>
+      <img src=" {% static 'slick/img/image1.jpg' %}">
+    </div>
+    <div>
+      <img src=" {% static 'slick/img/image2.jpg' %}">
+    </div>
+    <div>
+      <img src=" {% static 'slick/img/image3.jpg' %}">
+    </div>
+    <div>
+      <img src=" {% static 'slick/img/image4.jpg' %}">
+    </div>
+    <div>
+      <img src=" {% static 'slick/img/image5.jpg' %}">
+    </div>
+    <div>
+      <img src=" {% static 'slick/img/image6.jpg' %}">
+    </div>
+  </section>
+
+
+<script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+
+    $(document).on('ready', function() {
+      $(".vertical-center-1").slick({
+        dots: true,
+        infinite: true,
+        speed: 1000,
+        fade: true,
+        cssEase: 'ease',
+        arrows: false,
+        autoplay: true,
+        autoplaySpeed: 4000,
+        mobileFirst: true,
+        adaptiveHeight: true,
+        // variableWidth: true,
+        // variableHeight: true
+      });
+
+    });
+</script>
+{% endblock %}

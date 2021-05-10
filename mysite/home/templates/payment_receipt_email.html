@@ -1,0 +1,39 @@
+{% autoescape off %}
+Hi {{ user.username }},
+
+Thank you for your order from Digi Louvre. Please see your receipt below:
+
+Order #: {{ order.id }}
+Date: {{ order.ordered_date }}
+Payment type: {% if order.payment.payment_type == 'S' %}Credit card (Stripe){% elif order.payment.payment_type == 'P' %}Paypal{% endif %}
+
+Order items:
+    {% for order_item in order.items.all %}{{ order_item.quantity }} x {{ order_item.item.item_name }} - ${{ order_item.get_final_price|floatformat:2 }}{% endfor %}
+
+Subtotal: ${{order.subtotal|floatformat:2}}
+Shipping amount: ${{ order.shipping_amount|floatformat:2 }}
+Tax rate: {% widthratio order.tax_rate 1 100 %}%
+Tax amount: ${{ order.tax_amount|floatformat:2 }}
+Total (CAD): ${{ order.get_total_price|floatformat:2 }}
+
+Shipping address:
+{% if order.checkout_address.address_is_same %}
+Name: {{ order.checkout_address.billing_name }}
+Street Address: {{ order.checkout_address.street_address }}
+Apartment Address: {{ order.checkout_address.apartment_address }}
+City: {{ order.checkout_address.city }}
+Province/State: {{ order.checkout_address.province_or_state }}
+Country: {{ order.checkout_address.country }}
+Postal/Zip code: {{ order.checkout_address.zip }}
+{% else %}
+Name: {{ order.checkout_address.shipping_name }}
+Street Address: {{ order.checkout_address.shipping_street_address }}
+Apartment Address: {{ order.checkout_address.shipping_apartment_address }}
+City: {{ order.checkout_address.shipping_province_or_state }}
+Province/State: {{ order.checkout_address.shipping_country }}
+Country: {{ order.checkout_address.country }}
+Postal/Zip code: {{ order.checkout_address.shipping_zip }}
+{% endif %}
+
+https://www.digilouvre.com/
+{% endautoescape %}

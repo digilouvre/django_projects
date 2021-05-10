@@ -1,0 +1,100 @@
+{% extends "dl_menu.html" %}
+{% load humanize %} <!-- https://docs.djangoproject.com/en/3.0/ref/contrib/humanize -->
+{% block head %}
+
+{% endblock %}
+{% block content %}
+
+<span style="float: right;">
+{% if image.owner == user %}
+<a href="{% url 'dl:image_update' image.id %}"><i class="fa fa-pencil"></i></a>
+<a href="{% url 'dl:image_delete' image.id %}"><i class="fa fa-trash"></i></a>
+{% endif %}
+</span>
+<h1 class="text-center">{{ image.title }}</h1>
+
+<img  class="img-responsive center-block" src="/media/{{ image.image }}">
+
+<p class="text-center">
+<h4>Description:</h4>
+<p>{{ image.description }}</p>
+
+<!--<p class="text-center">(Posted {{ image.updated_at|naturaltime }})</p>-->
+
+{% if previous_image and next_image %}
+<a href="{% url 'dl:image_detail' next_image.id %}"><span class="glyphicon glyphicon-arrow-left" style="color: white;"></i></a>
+<a href="{% url 'dl:image_detail' previous_image.id %}"><span class="glyphicon glyphicon-arrow-right pull-right" style="color: white;"></i></a>
+{% elif next_image %}
+    <a href="{% url 'dl:image_detail' next_image.id %}"><span class="glyphicon glyphicon-arrow-left" style="color: white;"></i></a>
+{% elif previous_image %}
+<div class="text-right">
+<a href="{% url 'dl:image_detail' previous_image.id %}"><span class="glyphicon glyphicon-arrow-right" style="color: white;"></i></a>
+</div>
+{% endif %}
+
+<p></p>
+
+{% if product_list %}
+
+<button type="button" id="button" class="btn btn-primary btn-block">Buy Image</button>
+<p></p>
+<div id="product-list" style="display:none;">
+<ul class="list-group">
+    <h3 class="list-group-item-heading">This image is available in the following formats:</h3>
+  {% for product in product_list %}
+
+        <a class="list-group-item" href="{% url 'dl:product'  product.id %}">
+                {% if product.owner == user %}
+        <span class="pull-right">
+                <form action="{% url 'dl:product_delete' product.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </form>
+            </span>
+            <span class="pull-right">
+                <form action="{% url 'dl:product_update' product.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                </form>
+            </span>
+        {% endif %}
+        <h4 class="list-group-heading"> {{ product.item_name }} - ${{ product.price|floatformat:2 }}</h4>
+
+    </a>
+
+  {% endfor %}
+</ul>
+</div>
+{% endif %}
+
+
+<p>
+</p>
+<p>
+<!--<a href="{% url 'dl:all' %}">All Images</a>-->
+<a href="{% url 'dl:all' %}" class="btn btn-default btn-block" role="button">All Images</a>
+</p>
+
+<script>
+    var button = document.getElementById('button'); // Assumes element with id='button'
+
+button.onclick = function() {
+    var div = document.getElementById('product-list');
+    if (div.style.display !== 'none') {
+        div.style.display = 'none';
+        document.querySelector('#button').innerHTML = 'Buy Image';
+        document.querySelector('#button').innerText = 'Buy Image';
+        document.querySelector('#button').textContent = 'Buy Image';
+
+    }
+    else {
+        div.style.display = 'block';
+        document.querySelector('#button').innerHTML = 'Hide Products';
+        document.querySelector('#button').innerText = 'Hide Products';
+        document.querySelector('#button').textContent = 'Hide Products';
+    }
+};
+</script>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base_bootstrap.html" %}
+{% block navbar %}
+{% load app_tags %}
+
+
+<nav class="navbar navbar-default navbar-inverse" >
+
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+        {% url 'mld:mld_home' as home_url %}
+                <a class="navbar-brand" href="{% url 'mld:mld_home' %}">{{ settings.APP_NAME }}</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+    <ul class="nav navbar-nav">
+        {% url 'mld:mld_about' as about_url %}
+        <li {% if request.get_full_path == about_url %}class="active"{% endif %}>
+          <a href="{% url 'mld:mld_about' %}">How to use this app</a></li>
+          {% if user.is_authenticated %}
+      {% url 'mld:all' as mld_url %}
+      <li {% if request.get_full_path == mld_url %}class="active"{% endif %}>
+          <a href="{% url 'mld:all' %}">Entries</a></li>
+      {% url 'mld:all_graphs' as graphs_url %}
+      <li {% if request.get_full_path == graphs_url %}class="active"{% endif %}>
+          <a href="{% url 'mld:all_graphs' %}">Graphs</a></li>
+      {% url 'mld:all_datasets' as datasets_url %}
+      <li {% if request.get_full_path == datasets_url %}class="active"{% endif %}>
+          <a href="{% url 'mld:all_datasets' %}">Datasets</a></li>
+      {% url 'mld:all_algorithms' as algorithms_url %}
+      <li {% if request.get_full_path == algorithms_url %}class="active"{% endif %}>
+          <a href="{% url 'mld:all_algorithms' %}">Algorithms</a></li>
+          {% endif %}
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}
+        <li class="dropdown">
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                <img style="width: 25px;" src="{{ user|gravatar:60 }}"/><b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="{% url 'logout' %}?next={% url 'mld:mld_home' %}">Logout</a></li>
+            </ul>
+        </li>
+        {% else %}
+
+        <li {% if request.get_full_path == about_url or request.get_full_path == home_url %}{%else%}class='active'{% endif %}>
+        <a href="{% url 'login' %}?next={% url 'mld:all' %}">Login</a>
+        </li>
+        {% endif %}
+    </ul>
+  </div>
+  </div>
+</nav>
+
+
+{% endblock %}

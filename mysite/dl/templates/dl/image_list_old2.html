@@ -1,0 +1,45 @@
+{% extends "dl_menu.html" %}
+{% load humanize %}
+{% block content %}
+<h1  class="text-center">All Images</h1>
+<div class="container">
+    {% if user.is_authenticated and user.is_superuser %}
+    <form action="{% url 'dl:image_create' %}">
+        <input class ="form-control form-horizontal btn btn-primary" type="submit" value="Add Image">
+    </form>
+    {% endif %}
+{% if image_list %}
+
+  {% for image in image_list %}
+
+
+
+    {% if forloop.first %}<div class="row">{% endif %}
+    <div class="col-md-4">
+        <div class="thumbnail">
+            <a href="{% url 'dl:image_detail' image.id %}">
+                <!--<img  class="img-responsive center-block" src="/media/{{ image.image }}">-->
+                <img  class="img-responsive center-block" src="{{ image.thumbnail.url }}">
+
+                <div class="caption"> <h4 class="text-center">{{image.title}}</h4>
+                <p class="text-center"><em>{{image.category.title}}</em></p>
+                <!--<p class="text-center"><small>Posted {{ image.updated_at|naturaltime }}</small></p>-->
+
+                </div>
+        </div>
+
+            </a>
+        </div>
+    {% if forloop.counter|divisibleby:3 %}</div><div class="row">{% endif %}
+    {% if forloop.last %}</div>{% endif %}
+
+
+  {% endfor %}
+
+{% else %}
+  <p>There are no images in the database.</p>
+{% endif %}
+</p>
+</div>
+
+{% endblock %}

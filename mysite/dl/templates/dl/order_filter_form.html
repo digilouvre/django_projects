@@ -1,0 +1,15 @@
+{% extends "dl_menu_light.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<p>
+  <form action="" method="post" id="upload_form" enctype="multipart/form-data">
+    {% comment %}
+    {% csrf_token %}
+    {% endcomment %}
+    {{ form|crispy }}
+    <input type="submit" value="Submit">
+    <input type="submit" value="Cancel" onclick="window.location.href='{% url 'dl:all_orders' %}';return false;">
+  </form>
+</p>
+
+{% endblock %}

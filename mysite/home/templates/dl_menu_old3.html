@@ -1,0 +1,101 @@
+{% extends "dl_base_bootstrap.html" %}
+{% block navbar %}
+{% load app_tags %}
+
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar">
+
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+        {% url 'dl:all' as home_url %}
+                <a class="navbar-brand" href="{% url 'dl:all' %}">Digi Louvre</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+    <ul class="nav navbar-nav">
+
+      {% url 'dl:all' as dl_url %}
+      <li {% if request.get_full_path == dl_url %}class="active"{% endif %}>
+          <a href="{% url 'dl:all' %}">All Images</a></li>
+
+      {% if gallery_list %}
+      {% for gallery in gallery_list %}
+      <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="{% url 'dl:gallery_detail'  gallery.id %}">{{ gallery.title }}
+          <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+              {% if category_list %}
+
+                {% for category in category_list %}
+                    {% if category.gallery.id == gallery.id %}
+                    <li><a href="{% url 'dl:category_detail'  category.id %}">{{ category.title }}</a></li>
+                    {% endif %}
+
+                {% endfor %}
+               {% endif %}
+
+          </ul>
+          </li>
+
+      {% endfor %}
+      {% endif %}
+
+      {% url 'dl:dl_about' as about_url %}
+        <li {% if request.get_full_path == about_url %}class="active"{% endif %}>
+          <a href="{% url 'dl:dl_about' %}">About Digi Louvre</a></li>
+      {% url 'dl:contact_page' as contact_url %}
+        <li {% if request.get_full_path == contact_url %}class="active"{% endif %}>
+          <a href="{% url 'dl:contact_page' %}">Contact Us</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+
+        {% if user.is_authenticated %}
+
+        <li><a href="{% url 'dl:order-summary' %}"><span class="glyphicon glyphicon-shopping-cart"></span> Shopping Cart</a>
+      </li>
+      {% endif %}
+
+         {% if user.is_authenticated %}
+        <li class="dropdown">
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                <img style="width: 25px;" src="{{ user|gravatar:60 }}"/><b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% if user.is_authenticated and user.is_superuser %}
+        {% url 'dl:all_categories' as categories_url %}
+      <li {% if request.get_full_path == categories_url %}class="active"{% endif %}>
+
+          <a href="{% url 'dl:all_categories' %}">Categories</a></li>
+      {% url 'dl:all_galleries' as galleries_url %}
+      <li {% if request.get_full_path == galleries_url %}class="active"{% endif %}>
+          <a href="{% url 'dl:all_galleries' %}">Galleries</a></li>
+      {% url 'dl:all_products' as products_url %}
+      <li {% if request.get_full_path == products_url %}class="active"{% endif %}>
+          <a href="{% url 'dl:all_products' %}">Products</a></li>
+
+      {% url 'dl:all_orders' as orders_url %}
+      <li {% if request.get_full_path == orders_url %}class="active"{% endif %}>
+          <a href="{% url 'dl:all_orders' %}">Orders</a></li>
+          {% endif %}
+                <li><a href="{% url 'dl:change_password' %}?next={% url 'dl:all' %}">Change Password</a></li>
+                <li><a href="{% url 'logout' %}?next={% url 'dl:all' %}">Logout</a></li>
+            </ul>
+        </li>
+        {% else %}
+
+        <li>
+        <a href="{% url 'login' %}?next={% url 'dl:all' %}">Login</a>
+        </li>
+        {% endif %}
+    </ul>
+  </div>
+  </div>
+</nav>
+
+
+
+{% endblock %}
