@@ -8,6 +8,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,10 +20,13 @@ APP_NAME = 'Digi Louvre'
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY =
+
+SECRET_KEY = config('SECRET_KEY')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
@@ -53,13 +57,15 @@ INSTALLED_APPS = [
     'paypal.standard.ipn',
     'paypal.standard',
     'django_filters',
-
+    'axes',
+    # 'django-simple-captcha',
+    # 'captcha',
 ]
 
 PAYPAL_TEST = False
-PAYPAL_RECEIVER_EMAIL = 'mary@maryferguson.com'
 
-ADMIN_EMAIL = 'brynecarruthers@gmail.com'
+PAYPAL_RECEIVER_EMAIL = config('PAYPAL_RECEIVER_EMAIL')
+ADMIN_EMAIL = config('ADMIN_EMAIL')
 
 # When we get to crispy forms :)
 CRISPY_TEMPLATE_PACK = 'bootstrap3'  # Add
@@ -73,6 +79,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',   # Add
+    'csp.middleware.CSPMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -91,6 +99,7 @@ TEMPLATES = [
                 'home.context_processors.settings',      # Add
                 'social_django.context_processors.backends',  # Add
                 'social_django.context_processors.login_redirect', # Add
+                'csp.context_processors.nonce',
             ],
         },
     },
@@ -112,10 +121,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'digilouvre$default',
-        'USER': 'digilouvre',
-        'PASSWORD': 'drcbeatz',
-        'HOST': 'digilouvre.mysql.pythonanywhere-services.com',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
         'OPTIONS': {
             # 'init_command': 'SET innodb_strict_mode=1',
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES', innodb_strict_mode=1",
@@ -125,10 +134,10 @@ DATABASES = {
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_HOST =
-EMAIL_PORT =
-EMAIL_HOST_USER =
-EMAIL_HOST_PASSWORD =
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 
 # Password validation
@@ -165,15 +174,22 @@ USE_L10N = True
 USE_TZ = True
 
 
-STRIPE_KEY = 'sk_test_51IBNYyI9DIx7WcqFZNY6FZAhWntn6bOizYO8bCYTMBGDIs4srO4Oz7ZC141M6qaSQIxanGtOYBQWAdOJ9DTb4gyB00xejWfAQD'
+# STRIPE_KEY = 'sk_test_51IBNYyI9DIx7WcqFZNY6FZAhWntn6bOizYO8bCYTMBGDIs4srO4Oz7ZC141M6qaSQIxanGtOYBQWAdOJ9DTb4gyB00xejWfAQD'
+STRIPE_KEY = config('STRIPE_PRIVATE_KEY')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/home/digilouvre/django_projects/static'
+
 MEDIA_URL = '/media/'
-MEDIA_ROOT = 'media/'
 # for production url could be: /home/mysite/media/
+MEDIA_ROOT = 'media/'
+# MEDIA_ROOT = '/home/digilouvre/django_projects/media'
+
+
+
 
 # TEMPLATE_CONTEXT_PROCESSORS
 
@@ -197,6 +213,7 @@ except:
 # https://python-social-auth.readthedocs.io/en/latest/configuration/django.html#authentication-backends
 # https://simpleisbetterthancomplex.com/tutorial/2016/10/24/how-to-add-social-login-to-django.html
 AUTHENTICATION_BACKENDS = (
+    'axes.backends.AxesBackend',
     'social_core.backends.github.GithubOAuth2',
     # 'social_core.backends.twitter.TwitterOAuth',
     # 'social_core.backends.facebook.FacebookOAuth2',
@@ -213,6 +230,64 @@ LOGIN_REDIRECT_URL = '/'
 # https://coderwall.com/p/uzhyca/quickly-setup-sql-query-logging-django
 # https://stackoverflow.com/questions/12027545/determine-if-django-is-running-under-the-development-server
 
+
+# django-csp headers:
+
+CSP_STYLE_SRC = (
+    "'self'",
+    "cdnjs.cloudflare.com",
+    "use.fontawesome.com",
+    "fonts.googleapis.com",
+    "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
+    "'sha256-OTeu7NEHDo6qutIWo0F2TmYrDhsKWCzrUgGoxxHGJ8o='",
+    "'sha256-xW6Sm5DSIzsGOz33kiGmYRCd4xdcnrYvxdyr96EWC/o='",
+    "'sha256-aP33zotMllC2+85EQlL40wB2p6J/K2ouyIytJ5DQeYA='",
+    "'sha256-pHt0kRn1eEo23ySyDqVDAbezsvnwttbDTDTlo3/I330='",
+    )
+
+CSP_SCRIPT_SRC = ("'self'",
+    "maxcdn.bootstrapcdn.com",
+    "static.cloudflareinsights.com",
+    "www.google-analytics.com",
+    "ssl.google-analytics.com",
+    "cdn.ampproject.org",
+    "www.googletagservices.com",
+     "js.stripe.com",
+     )
+
+CSP_IMG_SRC = ("'self'",
+    "www.google-analytics.com",
+    "raw.githubusercontent.com",
+    "googleads.g.doubleclick.net",
+    "www.paypal.com",
+    'www.paypalobjects.com',
+    "data:")
+
+CSP_FONT_SRC = ("'self'",
+    "cdnjs.cloudflare.com",
+    "use.fontawesome.com",
+    "fonts.gstatic.com",
+    "data:",
+    )
+
+CSP_CONNECT_SRC = ("'self'",
+    "www.google-analytics.com",
+    "api.stripe.com")
+CSP_OBJECT_SRC = ("'none'", )
+CSP_BASE_URI = ("'self'", )
+CSP_FRAME_SRC = ("js.stripe.com", "hooks.stripe.com")
+CSP_FRAME_ANCESTORS = ("'self'", "js.stripe.com", "hooks.stripe.com" )
+CSP_FORM_ACTION = (
+    "'self'",
+    'ipnpb.paypal.com',
+    )
+CSP_INCLUDE_NONCE_IN = ('script-src', 'style-src' )
+CSP_MANIFEST_SRC = ("'self'", )
+CSP_WORKER_SRC = ("'self'", )
+CSP_MEDIA_SRC = ("'self'", )
+CSP_CONNECT_SRC = ("'self'",)
+CSP_DEFAULT_SRC = ("'none'",)
+
 # Security settings for production:
 
 SECURE_SSL_REDIRECT = True
@@ -222,7 +297,7 @@ CSRF_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-SECURE_HSTS_SECONDS = 60
+SECURE_HSTS_SECONDS = 15768000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 

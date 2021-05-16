@@ -56,11 +56,6 @@
             <td colspan="5">Your Cart is Empty</td>
         </tr>
 
-        <!-- <tr>-->
-        <!--    <td colspan="5">-->
-        <!--        <a href="/" class="btn btn-primary float-right">Continue Shopping</a>-->
-        <!--    </td>-->
-        <!--</tr>-->
          <tr>
             <td colspan="5">
                 <a href="/" class="btn btn-primary btn-block">Continue Shopping</a>
@@ -75,13 +70,6 @@
             <td colspan="4"><b>Total Order Price</b></td>
             <td>${{ order.get_total_price|floatformat:2 }}</td>
         </tr>
-        <!-- <tr>-->
-        <!--    <td colspan="5">-->
-        <!--        <a href="{% url 'dl:checkout' %}" class="btn btn-warning float-right ml-2">Checkout</a>-->
-        <!--        <a href="{% url 'dl:all' %}" class="btn btn-primary float-right">Continue Shopping</a>-->
-        <!--    </td>-->
-        <!--</tr>-->
-
 
         {% endif %}
 

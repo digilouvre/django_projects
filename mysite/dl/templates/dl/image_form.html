@@ -1,5 +1,6 @@
 {% extends "dl_menu_light.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
 {% block header %}
 <style type="text/css">
 
@@ -13,11 +14,13 @@
     {% csrf_token %}
     {{ form|crispy }}
 
-    <input type="submit" value="Submit">
+    <input type="submit" id="buttonSubmit" value="Submit" class="btn btn-block btn-primary">
 
-    <input type="submit" value="Cancel" onclick="window.location.href='{% url 'dl:all' %}';return false;">
+    <input type="submit" value="Cancel" id="buttonCancel" class="btn btn-block btn-default">
+
   </form>
 </p>
 
+ <script src="{% static 'js/cancel_button.js'  %}"></script>
 
 {% endblock %}

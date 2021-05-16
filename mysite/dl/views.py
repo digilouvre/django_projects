@@ -1,16 +1,15 @@
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.views import View
 from dl.models import Gallery, Category, Image, Payment, Item, OrderItem, Order, CheckoutAddress, Profile, ProvinceOrState, Setting
 from django.views.generic import ListView, DetailView
-from dl.owner import OwnerListView, OwnerDetailView, OwnerCreateView, OwnerUpdateView, OwnerDeleteView
-from django.contrib.auth import login, authenticate, update_session_auth_hash
+from dl.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
+from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import PasswordChangeForm
 from django.views.decorators.csrf import csrf_exempt
 
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -28,11 +27,7 @@ from paypal.standard.forms import PayPalPaymentsForm
 
 from django.core.mail import send_mail
 
-from django.utils.timezone import now
-
-
-# import environ
-# import os
+# from django.utils.timezone import now
 
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -44,15 +39,13 @@ from django.template.loader import render_to_string
 
 from django.contrib.auth.models import User
 
-stripe.api_key = 'sk_test_51IALXjJ9OrFClktekH8O1GYyzxhtFcdqMbt1csJ2okQ2SCuQu0u7nOzYHedOY4UotUlbbdREA21UJP08ZQr0RUXQ00g0oZvqfp'
+stripe.api_key = settings.STRIPE_KEY
 
 from dl.forms import CreateImageForm, CreateCategoryForm, CreateGalleryForm, CheckoutForm, CreateProductForm, SignUpForm
 
 from .filters import OrderFilter
 from django_filters.views import FilterView
 
-
-TAXES_ENABLED = True
 
 def send_contact(request):
     name = request.POST.get("name")
@@ -76,9 +69,6 @@ class UserListView(OwnerListView):
     paginate_by = 3
     queryset = Image.objects.all().order_by('-id')  # Default: Model.objects.all()
 
-class CarouselView(TemplateView):
-    template_name = "dl/carousel.html"
-
 def paypal_payment(request):
     host = request.get_host()
     order = Order.objects.get(user=request.user, ordered=False)
@@ -89,8 +79,7 @@ def paypal_payment(request):
         'business': settings.PAYPAL_RECEIVER_EMAIL,
         'amount': amount,
         'item_name': 'Digi Louvre order',
-        #'invoice': 'Test Payment Invoice3',
-        'invoice': 'Order # ' + str(order.id),
+        'invoice': order.id,
         'currency_code': 'CAD',
         'notify_url': 'http://{}{}'.format(host, reverse('dl:paypal-ipn')),
         'return_url': 'http://{}{}'.format(host, reverse('dl:payment_done')),
@@ -102,42 +91,14 @@ def paypal_payment(request):
 
 @csrf_exempt
 def payment_done(request):
-    messages.success(request, 'Success! Payment processed.')
-    # return render(request, 'dl/payment_done.html')
+    messages.success(request, 'Success! Payment processed (Paypal).')
     return redirect('/')
 
 
 @csrf_exempt
 def payment_cancelled(request):
     messages.error(request, 'Payment cancelled (Paypal).')
-    # return render(request, 'dl/payment_cancelled.html')
     return redirect('/')
-
-
-
-class PaypalFormView(FormView):
-    template_name = 'dl/paypal_form.html'
-    form_class = PayPalPaymentsForm
-
-    def get_initial(self):
-        return {
-            "business": 'bryne@carruthers.com',
-            "amount": 1,
-            "currency_code": "CAD",
-            "item_name": 'Example item',
-            "invoice": 1234,
-            "notify_url": self.request.build_absolute_uri(reverse('paypal-ipn')),
-            "return_url": self.request.build_absolute_uri(reverse('paypal-return')),
-            "cancel_return": self.request.build_absolute_uri(reverse('paypal-cancel')),
-            "lc": 'EN',
-            "no_shipping": '1',
-        }
-
-class PaypalReturnView(TemplateView):
-    template_name = 'paypal_success.html'
-
-class PaypalCancelView(TemplateView):
-    template_name = 'paypal_cancel.html'
 
 @login_required
 def change_password(request):
@@ -173,32 +134,13 @@ def signup(request):
                 # 'uid': str(user.pk),
                 'token': account_activation_token.make_token(user),
             })
-            # user.email_user(subject, message)
             send_mail(subject, message, 'noreply@digilouvre.com', [user.email])
-            # return redirect('dl:account_activation_sent')
             messages.info(request, "Please confirm your email address to complete the registration.")
             return redirect('/')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
 
-# Old signup without email authetication:
-#
-# def signup(request):
-#     if request.method == 'POST':
-#         form = SignUpForm(request.POST)
-#         if form.is_valid():
-#             user = form.save()
-#             user.refresh_from_db()  # load the profile instance created by the signal
-#             # user.profile.birth_date = form.cleaned_data.get('birth_date')
-#             user.save()
-#             raw_password = form.cleaned_data.get('password1')
-#             user = authenticate(username=user.username, password=raw_password)
-#             login(request, user)
-#             return redirect('/')
-#     else:
-#         form = SignUpForm()
-#     return render(request, 'signup.html', {'form': form})
 
 def activate(request, uidb64, token):
     try:
@@ -212,17 +154,14 @@ def activate(request, uidb64, token):
         user.profile.email_confirmed = True
         user.save()
         # login(request, user, backend='django.core.mail.backends.console.EmailBackend')
-        # login(request, user, backend='django.core.mail.backends.console.EmailBackend')
         messages.success(request, "Account verified! Please login to buy images.")
 
         return redirect('/')
     else:
         messages.error(request, "The confirmation link was invalid, possibly because it has already been used.")
-        # return render(request, 'account_activation_invalid.html')
         return redirect('/')
 
-def account_activation_sent(request):
-    return render(request, 'account_activation_sent.html')
+
 
 
 class StripePaymentView(View):
@@ -234,7 +173,6 @@ class StripePaymentView(View):
             'taxes_enabled' : taxes_enabled.enabled
         }
         return render(self.request, "dl/stripe-payment.html", context)
-
     def post(self, *args, **kwargs):
         order = Order.objects.get(user=self.request.user, ordered=False)
         token = self.request.POST.get('stripeToken')
@@ -353,7 +291,6 @@ class CheckoutView(View):
             'taxes_enabled': taxes_enabled.enabled
         }
         return render(self.request, 'dl/checkout.html', context)
-
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
         update_profile = Profile.objects.get(id=self.request.user.profile.id)
@@ -619,27 +556,6 @@ class DlAboutView(TemplateView):
         context = {'gallery_list': gallery_list, 'category_list': category_list}
         return context
 
-# class ImageListView(OwnerListView):
-#     model = Image
-#     paginate_by = 3
-#     # By convention:
-#     queryset = Image.objects.all().order_by('-id')
-#     template_name = "dl/image_list.html"
-#     context_object_name = 'image_list'
-#     def get(self, request) :
-#         # image_list = Image.objects.all().order_by('-pk')
-#         category_list = Category.objects.all()
-#         gallery_list = Gallery.objects.all()
-#         # ctx = {'image_list' : image_list, 'gallery_list' : gallery_list, 'category_list' : category_list}
-#         ctx = {'gallery_list' : gallery_list, 'category_list' : category_list}
-#         return render(request, self.template_name, ctx)
-
-    # model = Image
-    # template_name = 'dl/user_list.html'  # Default: <app_label>/<model_name>_list.html
-    # context_object_name = 'images'  # Default: object_list
-    # paginate_by = 3
-    # queryset = Image.objects.all().order_by('-id')  # Default: Model.objects.all()
-
 class ImageListView(OwnerListView):
     model = Image
     template_name = "dl/image_list.html"
@@ -691,10 +607,7 @@ class OrderListView(ListView, FilterView):
         taxes_enabled = Setting.objects.filter(name='Taxes').first()
         ctx = {'order_count':order_count, 'order_filter':order_filter, 'total': total, 'order_list' : order_list, 'payment_list' : payment_list, 'checkout_address': checkout_address, 'item_list' : item_list, 'taxes_enabled' : taxes_enabled.enabled}
         return render(request, self.template_name, ctx)
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['order_filter'] = OrderFilter(self.request.GET, queryset=self.get_queryset())
-    #     return context
+
 
 class OrderDetailView(OwnerDetailView):
     model = Order
@@ -744,45 +657,6 @@ class ImageDetailView(OwnerDetailView):
         context = { 'image' : image, 'gallery_list': gallery_list, 'category_list':category_list, 'product_list':product_list, 'next_image':next_image, 'previous_image':previous_image }
         return render(request, self.template_name, context)
 
-# class CategoryDetailView(OwnerDetailView):
-#     model = Category
-#     template_name = "dl/category_detail.html"
-#     paginate_by = 3
-#     def get_context_data(self, **kwargs):
-#         context = super(CategoryDetailView, self).get_context_data(**kwargs)
-#         category = Category.objects.get(id=pk)
-#         # images = Image.objects.all().order_by('-id')
-#         images = Image.objects.all().filter(category=category.id)
-#         paginator = Paginator(images, self.paginate_by)
-#         page = self.request.GET.get('page')
-
-#         try:
-#             image_list = paginator.page(page)
-#         except PageNotAnInteger:
-#             image_list = paginator.page(1)
-#         except EmptyPage:
-#             image_list = paginator.page(paginator.num_pages)
-
-#         context['category'] = category
-#         context['image_list'] = image_list
-#         category_list = Category.objects.all()
-#         context['category_list'] = category_list
-#         gallery_list = Gallery.objects.all()
-#         context['image_carousel_list'] = Image.objects.all().order_by('-id')
-#         context['gallery_list'] = gallery_list
-#         return context
-
-# class CategoryDetailView(OwnerDetailView):
-#     model = Category
-#     template_name = "dl/category_detail.html"
-#     def get(self, request, pk) :
-#         category = Category.objects.get(id=pk)
-#         image_list = Image.objects.all().filter(category=category.id)
-#         gallery_list = Gallery.objects.all()
-#         category_list = Category.objects.all()
-#         context = { 'category' : category, 'image_list' : image_list,  'gallery_list': gallery_list, 'category_list':category_list }
-#         return render(request, self.template_name, context)
-
 class CategoryDetailView(OwnerDetailView,MultipleObjectMixin):
     model = Category
     template_name = "dl/category_detail.html"
@@ -811,34 +685,6 @@ class CategoryDetailView(OwnerDetailView,MultipleObjectMixin):
         context['image_carousel_list'] = Image.objects.filter(category=self.object.id).order_by('-id')
         context['gallery_list'] = gallery_list
         return context
-
-
-# class CategoryDetailView(OwnerDetailView):
-#     model = Category
-#     template_name = "dl/category_detail.html"
-#     paginate_by = 3
-#     def get(self, request, pk) :
-#         # context = super(CategoryDetailView, self).get_context_data(**kwargs)
-#         category = Category.objects.get(id=pk)
-#         images = Image.objects.all().filter(category=category.id).order_by('-id')
-#         # images = Image.objects.all().filter(category=category.id).order_by('-id')
-#         # images = Image.objects.all().order_by('-id')
-#         paginator = Paginator(images, self.paginate_by)
-#         page = self.request.GET.get('page')
-#         try:
-#             image_list = paginator.page(page)
-#         except PageNotAnInteger:
-#             image_list = paginator.page(1)
-#         except EmptyPage:
-#             image_list = paginator.page(paginator.num_pages)
-
-#         gallery_list = Gallery.objects.all()
-#         category_list = Category.objects.all()
-#         image_carousel_list = Image.objects.all().filter(category=category.id)
-#         # image_carousel_list = Image.objects.all().filter(category=category.id).order_by('-id')
-#         context = { 'image_carousel_list' : image_carousel_list, 'category' : category, 'image_list' : image_list,  'gallery_list': gallery_list, 'category_list':category_list }
-#         return render(request, self.template_name, context)
-
 
 class GalleryDetailView(OwnerDetailView):
     model = Gallery
@@ -1023,15 +869,6 @@ class GalleryDeleteView(OwnerDeleteView):
 class ProductDeleteView(OwnerDeleteView):
     model = Item
 
-def stream_file(request, pk):
-    image = get_object_or_404(Image, id=pk)
-    response = HttpResponse()
-
-    response['Content-Type'] = image.content_type
-
-    response['Content-Length'] = len(image.image)
-    response.write(image.image)
-    return response
 
 
 

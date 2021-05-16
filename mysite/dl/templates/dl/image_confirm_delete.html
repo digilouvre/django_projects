@@ -1,11 +1,8 @@
 {% extends "dl_menu.html" %}
 {% block content %}
-
+{% load static %}
 
     <h1 class="text-center">Delete Image</h1>
-
-    <!--<h2 class="text-center">Are you sure you want to delete the image:</h1>-->
-    <!--<h3 class="text-center">{{ image }}?</h3>-->
 
     <ul class="list-group">
         <li class="list-group-item">
@@ -15,12 +12,13 @@
         </li>
     <form action="" method="POST">
           {% csrf_token %}
-          <input class ="form-control form-horizontal btn btn-warning" type="submit" value="Delete">
+          <input id="buttonSubmit" class="form-control form-horizontal btn btn-warning" type="submit" value="Delete">
         </form>
 
-    <button class="form-control form-horizontal btn btn-default" onclick="javascript:history.back();">Cancel</button>
+    <button id="buttonCancel" class="form-control form-horizontal btn btn-default">Cancel</button>
+
     </ul>
 
-
+<script src="{% static 'js/cancel_button.js'  %}"></script>
 
 {% endblock %}

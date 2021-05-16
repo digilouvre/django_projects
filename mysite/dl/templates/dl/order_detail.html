@@ -41,11 +41,6 @@
     <li class="list-group-item"> <strong>Tax rate:</strong> {{ order.get_tax_rate }}%</li>
     <li class="list-group-item"> <strong>Tax amount:</strong> ${{ order.tax_amount|floatformat:2 }}</li>
     <li class="list-group-item"> <strong>Total amount:</strong> ${{ order.payment.amount|floatformat:2 }}</li>
-
-
-
-
-
 </ul>
 
 <ul class="list-group">
@@ -54,7 +49,6 @@
     <li class="list-group-item"> {{ item }} - ${{ item.item.price|floatformat:2 }} each</li>
     {% endfor %}
 </ul>
-
 
 <p>
 <a href="{% url 'dl:all_orders' %}" class="btn btn-default btn-block" role="button">Back to Orders</a>

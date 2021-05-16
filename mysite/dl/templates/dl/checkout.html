@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<main >
+<main>
 
     <div class="container">
 
@@ -57,9 +57,6 @@
                     <label for="zip">Billing Postal or Zip Code</label>
                   {{ form.zip }}
 
-                  <div class="invalid-feedback" style="display:none">
-                    Zip code required.
-                  </div>
                 </div>
 
               <hr>
@@ -108,20 +105,12 @@
             <div class="md-form mb-5 form-group">
                 <label for="shipping_country">Shipping Country</label>
                   {{ form.shipping_country }}
-
             </div>
-
-
 
                 <div class="md-form mb-5 form-group">
                     <label for="zip">Shipping Postal or Zip Code</label>
                   {{ form.shipping_zip }}
-
-                  <div class="invalid-feedback" style="display:none">
-                    Zip code required.
-                  </div>
                 </div>
-
 
             </div>
             {% if user.is_superuser %}
@@ -185,7 +174,7 @@
     </div>
   </main>
   <!--Main layout-->
-<script>
+<script nonce="{{request.csp_nonce}}">
     // document.getElementsByTagName("select")[0].classList.add('form-control');
     // document.getElementsByTagName("select")[1].classList.add('form-control');
 
@@ -207,7 +196,7 @@
 
 
     {% if user.is_superuser is not True %}
-<script>
+<script nonce="{{request.csp_nonce}}">
         // remove international option from country select fields if user is not superuser
 
         const billingCountrySelect = document.getElementById("id_country");

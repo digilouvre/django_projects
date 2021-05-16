@@ -1,24 +1,25 @@
 {% extends "dl_menu.html" %}
+{% load static %}
 {% block content %}
 
 
-    <h1 class="text-center">Delete Product</h1>
+<h1 class="text-center">Delete Product</h1>
 
-        <form action="" method="POST">
-          {% csrf_token %}
-          <input class ="form-control form-horizontal btn btn-warning" type="submit" value="Delete">
-        </form>
-
-    <ul class="list-group">
+<ul class="list-group">
         <li class="list-group-item">
             <h4 class="list-group-item-heading">Are you sure you want to delete the product: </h4>
 
             <p class="list-group-item-text">{{ item }}?</p>
         </li>
+    <form action="" method="POST">
+          {% csrf_token %}
+          <input id="buttonSubmit" class ="form-control form-horizontal btn btn-warning" type="submit" value="Delete">
+        </form>
 
-    <button class="form-control form-horizontal btn btn-default" onclick="javascript:history.back();">Cancel</button>
+    <button id="buttonCancel" class="form-control form-horizontal btn btn-default">Cancel</button>
     </ul>
 
+<script src="{% static 'js/cancel_button.js'  %}"></script>
 
 
 {% endblock %}

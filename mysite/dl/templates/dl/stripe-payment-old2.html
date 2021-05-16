@@ -1,0 +1,134 @@
+{% extends 'dl_menu_light.html' %}
+{% load static %}
+{% block head %}
+
+<link ref="stylesheet" src="{% static 'css/stripe_payment.css' %}">
+
+{% endblock head %}
+
+{% block content %}
+
+<main>
+    <div class="container wow fadeIn">
+
+      <h2 class="my-5 h2 text-center">Credit Card Payment</h2>
+
+      <div class="row">
+
+        <div class="col-md-12 mb-4">
+          <!--<div class="card">-->
+
+            <script src="https://js.stripe.com/v3/"></script>
+
+            <div class="new-card-form">
+              <form action="." method="post" class="stripe-form" id="stripe-form">
+                  {% csrf_token %}
+                  <div class="stripe-form-row" id="creditCard">
+                      <label for="card-element" id="stripeBtnLabel">
+                          Credit Card
+                      </label>
+                      <div id="card-element" class="StripeElement StripeElement--empty"><div class="__PrivateStripeElement" style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;"><iframe frameborder="0" allowtransparency="true" scrolling="no" name="__privateStripeFrame5" allowpaymentrequest="true" src="https://js.stripe.com/v3/elements-inner-card-19066928f2ed1ba3ffada645e45f5b50.html#style[base][color]=%2332325d&amp;style[base][fontFamily]=%22Helvetica+Neue%22%2C+Helvetica%2C+sans-serif&amp;style[base][fontSmoothing]=antialiased&amp;style[base][fontSize]=16px&amp;style[base][::placeholder][color]=%23aab7c4&amp;style[invalid][color]=%23fa755a&amp;style[invalid][iconColor]=%23fa755a&amp;componentName=card&amp;wait=false&amp;rtl=false&amp;keyMode=test&amp;origin=https%3A%2F%2Fstripe.com&amp;referrer=https%3A%2F%2Fstripe.com%2Fdocs%2Fstripe-js&amp;controllerId=__privateStripeController1" title="Secure payment input frame" style="border: none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; height: 19.2px;"></iframe><input class="__PrivateStripeElement-input" aria-hidden="true" aria-label=" " autocomplete="false" maxlength="1" style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: 0px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;"></div></div>
+                  </div>
+                  <div class="stripe-form-row">
+                    <button id="stripeBtn" class="btn btn-primary btn-block">Submit Payment</button>
+                  </div>
+                  <div class="stripe-form-row">
+                    <!--<div class="custom-control custom-checkbox">-->
+                  <!--    <input type="checkbox" class="custom-control-input" name="save" id="save_card_info">-->
+                  <!--    <label class="custom-control-label" for="save_card_info">Save for future purchases</label>-->
+                  <!--  </div>-->
+                  </div>
+                  <p></p>
+                  <div id="card-errors" role="alert"></div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+        <!--Grid column-->
+        <div class="col-md-12 mb-4">
+
+          <!-- Heading -->
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Your cart</span>
+            <span class="badge">{{ order.get_item_count }}</span>
+          </h4>
+
+          <!-- Cart -->
+          <ul class="list-group mb-3 z-depth-1">
+
+            {% for order_item in order.items.all %}
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+              <div>
+                <h6 class="my-0">{{ order_item.quantity }} x {{ order_item.item.item_name }}</h6>
+                <small class="text-muted">{{ order_item.item.description }}</small>
+              </div>
+              <span class="text-muted">${{ order_item.get_final_price|floatformat:2 }}</span>
+            </li>
+            {% endfor %}
+
+
+            {% comment %} <li class="list-group-item d-flex justify-content-between bg-light">
+              <div class="text-success">
+                <h6 class="my-0">Promo code</h6>
+                <small>EXAMPLECODE</small>
+              </div>
+              <span class="text-success">-$0</span>
+            </li> {% endcomment %}
+            {% if taxes_enabled %}
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Subtotal:</span>
+              <strong>${{order.subtotal|floatformat:2}}</strong>
+            </li>
+            {% endif %}
+            {% if user.is_superuser %}
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Shipping amount:</span>
+              <strong>${{ order.shipping_amount|floatformat:2 }}</strong>
+            </li>
+            {% endif %}
+            {% if taxes_enabled %}
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Tax rate:</span>
+              <strong>{{ order.get_tax_rate }}%</strong>
+            </li>
+              <li class="list-group-item d-flex justify-content-between">
+              <span>Tax amount:</span>
+              <strong>${{ order.tax_amount|floatformat:2 }}</strong>
+            </li>
+            {% endif %}
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Total (CAD)</span>
+              <strong>${{ order.get_total_price|floatformat:2 }}</strong>
+            </li>
+
+          </ul>
+          <!-- Cart -->
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  {% load static %}
+<script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
+<!-- Initializations -->
+
+<script type="text/javascript" src="{% static 'js/stripe_payment.js'%}"></script>
+
+{% endblock content %}
+
+{% block extra_scripts %}
+
+
+
+{% endblock extra_scripts %}

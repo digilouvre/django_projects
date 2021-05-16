@@ -32,96 +32,6 @@ ANCHOR = (
     ('r', 'RIGHT')
 )
 
-TAX_RATES = (
-    ('AB', 0.05),
-    ('BC', 0.12),
-    ('MB', 0.12),
-    ('NB', 0.15),
-    ('NL', 0.15),
-    ('NT', 0.05),
-    ('NS', 0.15),
-    ('NU', 0.05),
-    ('ON', 0.13),
-    ('PE', 0.15),
-    ('QC', 0.14975),
-    ('SK', 0.11),
-    ('YT', 0.05),
-)
-
-PROVINCES_AND_STATES = (
-    ('Alberta',	'AB'),
-    ('British Columbia', 'BC'),
-    ('Manitoba', 'MB'),
-    ('New Brunswick', 'NB'),
-    ('Newfoundland and Labrador','NL'),
-    ('Northwest Territories', 'NT'),
-    ('Nova Scotia', 'NS'),
-    ('Nunavut',	'NU'),
-    ('Ontario',	'ON'),
-    ('Prince Edward Island', 'PE'),
-    ('Quebec','QC'),
-    ('Saskatchewan', 'SK'),
-    ('Yukon', 'YT'),
-    ('Alabama', 'AL'),
-    ('Alaska','AK'),
-    # ('American Samoa', 'AS')
-    ('Arizona',	'AZ'),
-    ('Arkansas','AR'),
-    ('California','CA'),
-    ('Colorado','CO'),
-    ('Connecticut','CT'),
-    ('Delaware','DE'),
-    ('District of Columbia','DC'),
-    ('Federated States of Micronesia','FM'),
-    ('Florida','FL'),
-    ('Georgia','GA'),
-    # ('Guam','GU'),
-    ('Hawaii','HI'),
-    ('Idaho','ID'),
-    ('Illinois','IL'),
-    ('Indiana','IN'),
-    ('Iowa','IA'),
-    ('Kansas','KS'),
-    ('Kentucky','KY'),
-    ('Louisiana','LA'),
-    ('Maine','ME'),
-    # ('Marshall Islands','MH'),
-    ('Maryland','MD'),
-    ('Massachusetts','MA'),
-    ('Michigan','MI'),
-    ('Minnesota','MN'),
-    ('Mississippi','MS'),
-    ('Missouri','MO'),
-    ('Montana','MT'),
-    ('Nebraska','NE'),
-    ('Nevada','NV'),
-    ('New Hampshire','NH'),
-    ('New Jersey','NJ'),
-    ('New Mexico','NM'),
-    ('New York','NY'),
-    ('North Carolina','NC'),
-    ('North Dakota', 'ND'),
-    # ('Northern Mariana Islands','MP'),
-    ('Ohio','OH'),
-    ('Oklahoma','OK'),
-    ('Oregon','OR'),
-    ('Palau','PW'),
-    ('Pennsylvania','PA'),
-    ('Puerto Rico','PR'),
-    ('Rhode Island','RI'),
-    ('South Carolina','SC'),
-    ('South Dakota','SD'),
-    ('Tennessee','TN'),
-    ('Texas','TX'),
-    ('Utah', 'UT'),
-    ('Vermont',	'VT'),
-    ('Virgin Islands','VI'),
-    ('Virginia', 'VA'),
-    ('Washington','WA'),
-    ('West Virginia','WV'),
-    ('Wisconsin','WI'),
-    ('Wyoming','WY'),
-)
 
 class Setting(models.Model):
     name = models.CharField(max_length=128, blank=True)
@@ -257,28 +167,18 @@ class CheckoutAddress(models.Model):
     street_address = models.CharField(max_length=100)
     apartment_address = models.CharField(max_length=100)
     city = models.CharField(max_length=100, default="")
-    # province_or_state = models.CharField(max_length=50, default="")
     province_or_state = models.ForeignKey(ProvinceOrState, models.SET_NULL, blank=True, null=True, related_name='+')
-    # province_or_state = models.CharField(choices=PROVINCES_AND_STATES, max_length=50, default="")
-    # province_or_state = models.CharField(choices=PROVINCES_AND_STATES, max_length=50)
-    # country = CountryField(multiple=False, countries=NACountries)
     country = CountryField(multiple=False)
-    # country = CountryField(countries=G8Countries)
     zip = models.CharField(max_length=100)
     shipping_name = models.CharField(max_length=100, default="")
     shipping_street_address = models.CharField(max_length=100, default="")
     shipping_apartment_address = models.CharField(max_length=100, default="")
     shipping_city = models.CharField(max_length=100, default="")
-    # shipping_province_or_state = models.CharField(max_length=50, default="")
-    # shipping_province_or_state = models.CharField(choices=PROVINCES_AND_STATES, max_length=50)
-    # shipping_province_or_state = models.CharField(choices=PROVINCES_AND_STATES, max_length=50, default="")
     shipping_province_or_state = models.ForeignKey(ProvinceOrState, models.SET_NULL, blank=True, null=True, related_name='+')
-    # shipping_country = CountryField(multiple=False, default="CA", blank_label='(select country)', countries=NACountries)
     shipping_country = CountryField(multiple=False, default="CA", blank_label='(select country)')
     shipping_zip = models.CharField(max_length=100, default="")
     address_is_same = models.BooleanField(default=False)
     shipping_amount = models.FloatField(default=0)
-
 
     def __str__(self):
         return self.user.username

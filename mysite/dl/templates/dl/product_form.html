@@ -1,13 +1,17 @@
 {% extends "dl_menu.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
 {% block content %}
 <p>
   <form action="" method="post" id="upload_form" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form|crispy }}
-    <input type="submit" value="Submit">
-    <input type="submit" value="Cancel" onclick="window.location.href='{% url 'dl:all_products' %}';return false;">
+    <input id="buttonSubmit" type="submit" value="Submit" class="btn btn-block btn-primary">
   </form>
+    <input id="buttonCancel" type="submit" value="Cancel" class="btn btn-block btn-default">
 </p>
+
+<script src="{% static 'js/cancel_button.js'  %}"></script>
+
 
 {% endblock %}

@@ -1,4 +1,5 @@
 {% extends "dl_base_bootstrap_light.html" %}
+{% load static %}
 {% block navbar %}
 {% load app_tags %}
 
@@ -62,9 +63,9 @@
         <li class="dropdown">
             <a href="#" data-toggle="dropdown" class="dropdown-toggle">
                 {% if user.is_superuser %}
-                <img style="width: 25px;" src="/static/mandala_6.png"/><b class="caret"></b>
+                <img class="dlIcon" src="{% static 'img/mandala_6.png' %}"/><b class="caret"></b>
                 {% else %}
-                <img style="width: 25px;" src="/static/mandala_4.png"/><b class="caret"></b>
+                <img class="dlIcon" src="{% static 'img/mandala_4.png' %}"/><b class="caret"></b>
                 {% endif %}
             </a>
             <ul class="dropdown-menu">

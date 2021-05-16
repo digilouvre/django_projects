@@ -1,43 +1,12 @@
 {% extends 'dl_menu_light.html' %}
+{% load static %}
 
 {% block head %}
-<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
 
-<style>
-    html,
-    body {
-      position: relative;
-      height: 100%;
-    }
+<link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}">
 
-    .swiper-container {
-      width: 100%;
-      height: 66%;
-    }
+<link rel="stylesheet" href="{% static 'css/product.css'%}">
 
-    .swiper-slide {
-      background-position: center;
-      background-size: contain;
-      background-color: black;
-      background-repeat: no-repeat;
-
-    }
-
-    .swiper-pagination-bullet {
-  opacity: 0.5;
-    background: var(--swiper-pagination-color, var(--swiper-theme-color));
-    background-color: gray;
-}
-    .swiper-pagination-bullet-active {
-    opacity: 1;
-    background: var(--swiper-pagination-color, var(--swiper-theme-color));
-    background-color: white;
-}
-.swiper-slide {
-  display: block;
-}
-
-</style>
 {% endblock %}
 
 {% block carousel %}
@@ -47,77 +16,25 @@
 <div id="swiper-container" class="swiper-container swiper-container-fade swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
     <div class="swiper-wrapper">
 
-    <a class="swiper-slide" style="background-image:url({{ item.image.preview.url }});"></a>
-
+     <a class="swiper-slide" id="img{{image.id}}"></a>
+    <script nonce="{{request.csp_nonce}}">
+        var el = document.getElementById("img{{image.id}}");
+        el.style.backgroundImage = "url('{{item.image.preview.url}}')";
+    </script>
 </div>
 </div>
 {% endblock %}
 
 {% block content %}
 <p></p>
-<!--Main layout-->
-  <!--<main class="mt-5 pt-4">-->
-    <!--<div class="container dark-grey-text mt-5">-->
+
         <div class="container dark-grey-text mt-5">
 
-      <!--Grid row-->
-      <!--<div class="row wow fadeIn">-->
-
-        <!--Grid column-->
-        <!--<div class="col-md-6 mb-4">-->
-
-         <!--<img  class="img-responsive center-block" alt="" src="{{ item.image.thumbnail.url }}">-->
-        <!--</div>-->
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <!--<div class="col-md-6 mb-4">-->
-
-          <!--Content-->
-          <!--<div class="p-4">-->
-
-            <!--<div class="mb-3">-->
-            <!--  <a href="">-->
-            <!--    <span class="badge purple mr-1">{{ object.get_category_display }}</span>-->
-            <!--  </a>-->
-            <!--  <a href="">-->
-            <!--    <span class="badge blue mr-1">{{ object.get_label_display }}</span>-->
-            <!--  </a>-->
-            <!--</div>-->
-
-            <!--<p class="lead">-->
-
-            <!--{% if object.discount_price %}-->
-            <!--  <span class="mr-1">-->
-            <!--  <del>${{ object.price }}</del>-->
-            <!--  </span>-->
-            <!--  <span>${{ object.discount_price }}</span>-->
-            <!--{% else %}-->
-            <!-- <span>${{ object.price }}</span>-->
-            <!--{% endif %}-->
-
-            <!--</p>-->
 
             <p class="lead font-weight-bold">{{ object.item_name }} - ${{ object.price|floatformat:2 }}</p>
 
             <p>{{ object.description }}</p>
 
-            {% comment %} <form class="d-flex justify-content-left">
-              <!-- Default input -->
-              <input type="number" value="1" aria-label="Search" class="form-control" style="width: 100px">
-              <!--<button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart-->
-              <!--  <i class="fas fa-shopping-cart ml-1"></i>-->
-              <!--</button>-->
-
-              <button class="btn btn-primary btn-block my-0 p" type="submit">Add to cart
-                <i class="fas fa-shopping-cart ml-1"></i>
-              </button>
-
-            </form> {% endcomment %}
-
-            <!--<a href="{{ object.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p" >Add to cart-->
-            <!--    <i class="fas fa-shopping-cart ml-1"></i>-->
-            <!--</a>-->
             <a href="{{ object.get_add_to_cart_url }}" class="btn btn-primary btn-block my-0 p" >Add to cart
                 <i class="fas fa-shopping-cart ml-1"></i>
             </a>
@@ -125,55 +42,25 @@
 
 
             {{ object.get_quantity_in_cart }}
-
-            <!--<a href="{{ object.get_remove_from_cart_url }}" class="btn btn-danger btn-md my-0 p" >Remove From cart-->
-            <!--    <i class="fas fa-trash ml-1"></i>-->
-            <!--</a>-->
             <a href="{{ object.get_remove_from_cart_url }}" class="btn btn-danger btn-block my-0 p" >Remove from cart
                 <i class="fas fa-trash ml-1"></i>
             </a>
 
-          <!--</div>-->
-          <!--Content-->
         <hr>
         <p>All online orders include free shipping to Canada and continental US. For pricing in other regions please contact us.</p>
 
         <p>
-            <!--<a href="{% url 'dl:all' %}">All images</a>-->
 
             <a href="{% url 'dl:all' %}" class="btn btn-default btn-block" >All Images</a>
         </p>
-        <!--</div>-->
-        <!--Grid column-->
 
 
       </div>
-      <!--Grid row-->
-
-
-
-      <!--Grid row-->
-      <!--<div class="row d-flex justify-content-center wow fadeIn">-->
-
-        <!--Grid column-->
-
-      <!--</div>-->
 
     </div>
   </main>
-  <!--Main layout-->
 
-<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-  <script>
-    var swiper = new Swiper('.swiper-container', {
-        observer: true,
-        observeParents: true,
-      spaceBetween: 30,
-     loop: true,
-      centeredSlides: true,
-     effect: 'fade',
-
-    });
-  </script>
+<script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'js/product.js' %}"></script>
 
 {% endblock content %}

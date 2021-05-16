@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.conf import settings
+# from csp.decorators import csp_exempt
 
 @receiver(valid_ipn_received)
 def payment_notification(sender, **kwargs):
